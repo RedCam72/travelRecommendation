@@ -131,13 +131,59 @@
             }            
             .nav-search button:hover { background: rgba(255,255,255,0.10); }
 
+            /* Contact form */
+            .contact-form {
+                margin-top: 14px;
+            }
+
+            .form-row {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                margin-bottom: 14px;
+            }
+
+            .form-row label {
+                color: var(--muted);
+                font-weight: 700;
+            }
+
+            .form-row input,
+            .form-row textarea {
+                padding: 10px 12px;
+                border-radius: 12px;
+                border: 1px solid rgba(255,255,255,0.22);
+                background: rgba(255,255,255,0.92);
+                color: #111;
+                outline: none;
+            }
+
+            .form-row input:focus,
+            .form-row textarea:focus {
+                border-color: rgba(255,255,255,0.55);
+                box-shadow: 0 0 0 3px rgba(255,209,102,0.25);
+            }
+
+            .primary-btn {
+                padding: 10px 14px;
+                border-radius: 12px;
+                border: 1px solid rgba(255,255,255,0.22);
+                background: var(--glass-dark-2);
+                color: var(--text);
+                cursor: pointer;
+            }
+
+            .primary-btn:hover {
+                background: rgba(255,255,255,0.10);
+            }
+
             /* Page content spacing */
             main {
                 position: fixed;
                 top: var(--nav-h);
                 left: 0;
                 width: 100%;
-                height: calc(100vh - var(--nav-h);
+                height: calc(100vh - var(--nav-h));
             }
 
             .screen {
@@ -146,7 +192,6 @@
                 height: 100%;
                 padding: 28px 16px;
 
-                display: none;
                 align-items: center;
                 justify-content: center;
             }
@@ -165,7 +210,13 @@
                 -webkit-backdrop-filter: blur(10px);
             }
 
-            .panel h1, .panel h2 { margin: 0 0 10px 0; }
+            .divider {
+                border: none;
+                border-top: 1px solid var(--border);
+                margin: 18px 0;
+            }
+
+            .panel h1, .panel h2, .panel h3 { margin: 0 0 10px 0; }
 
             .panel p {
                 margin: 10px 0;
@@ -175,8 +226,106 @@
 
             .panel a { color: var(--accent); }
 
+            #home .panel {
+                max-height: calc(100vh - var(--nav-h) - 48px);
+                overflow: hidden;
+            }
+
+            .team-grid {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 14px;
+            }
+            
+            .team-card {
+                padding: 16px;
+                border-radius: 14px;
+                background: rgba(255,255,255,0.06);
+                border: 1px solid var(--border);
+            }
+
+            .team-name {
+                margin: 0 0 6px 0;
+                font-size: 1.05rem;
+            }
+
+            .team-role {
+                margin: 0 0 10px 0;
+                color: var(--accent);
+                font-weight: 700;
+            }
+
+            .team-bio {
+                margin: 8px 0 0 0;
+                color: var(--muted)
+            }
+
+            /* Results (Home screen) */
+            #results {
+                margin-top: 16px;
+            }
+
+            .results-scroll {
+                max-height: 50vh;
+                overflow-y: auto;
+                padding-right: 6px;
+            }
+
+            .results-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 14px;
+            }
+
+            .result-card {
+                border-radius: 14px;
+                background: rgba(255,255,255,0.06);
+                border: 1px solid var(--border);
+                overflow: hidden;
+            }
+
+            .result-img {
+                width: 100%;
+                height: 180px;
+                object-fit: cover;
+                display: block;
+            }
+
+            .result-body {
+                padding: 12px;
+            }
+
+            .result-title {
+                margin: 0 0 8px 0;
+                font-size: 1.02rem;
+                font-weight: 800;
+                color: var(--text);
+            }
+
+            .result-desc {
+                margin: 0 0 10px 0;
+                color: var(--muted);
+                line-height: 1.4;
+            }
+
+            .result-meta {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+            }
+
+            .result-pill {
+                display: inline-block;
+                padding: 6px 10px;
+                border-radius: 999px;
+                font-size: 0.85rem;
+                font-weight: 700;
+                color: #111;
+                background: var(--accent);
+            }
+
             /* Responsive for narrow screens */
-            @media (max-width: 850px) {
+            @media (max-width: 900px) {
                 :root { --nav-h: 120px; }
                 
                 .navbar {
@@ -202,6 +351,15 @@
                 }
 
                 .nav-search input[type="search"] { width: 100%; }
+
+                .team-grid { grid-template-columns: 1fr; }
+
+                .results-grid {
+                    grid-template-columns: 1fr;
+                }
+                .result-img {
+                    height: 160px;
+                }
             }
         </style>
     </head>
@@ -223,7 +381,7 @@
                     type="search"
                     id="searchInput"
                     name="q"
-                    placeholder="Enter a place or keyword:"
+                    placeholder="Enter a place or keyword"
                 />
                 <button type="submit" id="searchBtn">Search</button>
                 <button type="reset" id="resetBtn">Reset</button>
@@ -238,6 +396,8 @@
                         Come explore with us!!  We are here to assit you.
                         Please use the search bar to explore our travel recommendations.
                     </p>
+
+                    <div id="results"></div>
                 </div>
             </section>
             
@@ -249,17 +409,86 @@
                     We want to help you with travel ideas based on your specific interests.
                     Please allow us to assist you!
                     </p>
+
+                    <hr class="divider" />
+
+                    <h3>Meet Our Team</h3>
+
+                    <div class="team-grid">
+                        <article class="team-card">
+                            <h4 class="team-name">Alexia Carter</h4>
+                            <p class="team-role">Travel Advisor</p>
+                            <p class="team-bio">
+                                Specializes in building curated itineraries and destination recommendations for first-time travelers.
+                            </p>
+                        </article>
+
+                        <article class="team-card">
+                            <h4 class="team-name">Morgan Leland</h4>
+                            <p class="team-role">Customer Support</p>
+                            <p class="team-bio">
+                                Focuses on assisting travelers with planning confidently and answering all questions.
+                            </p>
+                        </article>
+
+                        <article class="team-card">
+                            <h4 class="team-name">Anna Rivera</h4>
+                            <p class="team-role">Research Specialist</p>
+                            <p class="team-bio">
+                                Researches destinations and travel tips to keep recommendations current and useful.
+                            </p>
+                        </article>
+                    </div>
                 </div>
             </section>
 
             <section id="contact" class="screen">
                 <div class="panel">
                     <h2>Contact Us</h2>
+                    <p>
+                        Please use the form below to reach out. We will respond as soon as possible.
+                    </p>
+              
+                    <form id="contactForm" class="contact-form" action="#" method="post">
+                        <div class="form-row">
+                            <label for="contactName">Name</label>
+                            <input
+                                type="text"
+                                id="contactName"
+                                name="name"
+                                placeholder="Your name"
+                                required
+                            />
+                        </div>
+              
+                        <div class="form-row">
+                            <label for="contactEmail">Email</label>
+                            <input
+                                type="email"
+                                id="contactEmail"
+                                name="email"
+                                placeholder="you@example.com"
+                                required
+                            />
+                        </div>
+              
+                        <div class="form-row">
+                            <label for="contactMessage">Message</label>
+                            <textarea
+                                id="contactMessage"
+                                name="message"
+                                rows="6"
+                                placeholder="Write your message here..."
+                                required
+                            ></textarea>
+                        </div>
+              
+                        <button type="submit" class="primary-btn">Submit</button>
+                    </form>
                 </div>
-            </section>
-            
+            </section>              
         </main>
 
-        <!-- <script src="./travel_recommendation.js"></script> -->
+        <script src="./travel_recommendation.js"></script>
     </body>
 </html>
